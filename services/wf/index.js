@@ -7,7 +7,7 @@ module.exports = async function (fastify, opts) {
 
   fastify.post('/wf/send', function (request, reply) {
 
-    const TestModel = this.mongoose.Test;
+//    const TestModel = this.mongoose.Test;
     const WorkflowModel = this.mongoose.Workflow;
     const {id, role, name, payload} = request.body;
 
@@ -39,6 +39,44 @@ module.exports = async function (fastify, opts) {
     }
   })
 
+
+  fastify.post('/wf/query', {
+    preValidation: [fastify.authenticate]
+  }, function (request, reply) {
+    const WorkflowModel = this.mongoose.Workflow;
+    let {meta, event, query} = request.body;
+    meta = meta || {};
+    event = event || {};
+    query = query || [];
+
+    meta.user = request.user;
+
+    if(meta.wf_id && meta.user_role) {
+      WorkflowModel.findById(meta.wf_id,
+        function (err, rez) {
+          if(err) {
+            reply.send({reply: null, error: `error '${err}'` })
+            return;
+          }
+          if(rez) {
+            const q_rez = [];
+            for(let i=0; i<query.length; i++) {
+              const query_name = query[i];
+              //meta.query_name = query_name;
+//              rez.doQuery(user, meta.user_role, query_name, {}, function(answer) {
+              rez.doQuery({query_name, payload: {}, meta}, function(result) {
+                q_rez.push({name: query_name, result});
+//                q_rez.push({name: query_name, answer: "query answer"});
+              });
+            }
+            reply.send({reply: q_rez, error: null })
+          }
+        }
+      )
+    } else {
+      reply.send({reply: null, error: "wf_id is not set" })
+    }
+  })
 
   fastify.post('/wf/getSchema', function (request, reply) {
 

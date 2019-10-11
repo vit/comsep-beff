@@ -47,61 +47,7 @@ module.exports = async function (fastify, opts) {
     const importer = require('../../lib/import');
     importer.reload_all(fastify);
 
-/*
-
-    const UserModel = fastify.mongoose.User;
-    const WorkflowModel = fastify.mongoose.Workflow;
-
-    UserModel.deleteMany({}, function (err) {
-      if (err)
-        console.log(err);
-      else {
-        const db = new sqlite3.Database("/opt/common-data/gn/production.sqlite3");
-        db.each("SELECT * FROM users", function(err, row) {
-          console.log("row: ", row);
-          const {id, email, encrypted_password, fname, mname, lname} = row;
-    //      const userData = {gn_pin: id, email, encrypted_password, name: {fname, mname, lname}};
-          const userData = {gn_pin: id, email, encrypted_password, fname, mname, lname};
-          const user = new UserModel( userData );
-          user.save(function (err) {
-            console.log("_id:", user._id, "fullName: ", user.fullName());
-          });
-        });
-        db.close();
-      }
-      //reply.send({ ok: true });
-    });
-
-    WorkflowModel.deleteMany({}, function (err) {
-      if (err)
-        console.log(err);
-      else {
-
-        WorkflowModel.create({
-          slug: '__ROOT__',
-          state: "initial",
-          app: "__ROOT__",
-          cnt: 0,
-          title: "Root Workflow"
-        }, function (err, rez) {
-        });
-
-        WorkflowModel.create({
-          slug: 'gn',
-          state: "initial",
-          app: "__JOURNAL__",
-          cnt: 0,
-          title: "GN Journal Workflow"
-        }, function (err, rez) {
-        });
-
-      }
-    });
-*/
-
     reply.send({ ok: true });
-
-
 
   })
 
@@ -268,7 +214,7 @@ module.exports = async function (fastify, opts) {
 
   })
 
-
+/*
   fastify.post('/auth/login0', (request, reply) => {
     console.log(request.body);
 
@@ -301,8 +247,8 @@ module.exports = async function (fastify, opts) {
     
     db.close();
 
-
   })
+*/
 
   fastify.post('/auth/logout', function (request, reply) {
     reply.send({
