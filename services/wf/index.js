@@ -1,7 +1,5 @@
 'use strict'
 
-const sqlite3 = require('sqlite3').verbose();
-
 module.exports = async function (fastify, opts) {
 
 
@@ -39,7 +37,6 @@ module.exports = async function (fastify, opts) {
     }
   })
 
-
   fastify.post('/wf/query', {
     preValidation: [fastify.authenticate]
   }, function (request, reply) {
@@ -53,20 +50,18 @@ module.exports = async function (fastify, opts) {
 
     if(meta.wf_id && meta.user_role) {
       WorkflowModel.findById(meta.wf_id,
-        function (err, rez) {
+        function (err, wf) {
           if(err) {
             reply.send({reply: null, error: `error '${err}'` })
             return;
           }
-          if(rez) {
+          if(wf) {
             const q_rez = [];
             for(let i=0; i<query.length; i++) {
               const query_name = query[i];
               //meta.query_name = query_name;
-//              rez.doQuery(user, meta.user_role, query_name, {}, function(answer) {
-              rez.doQuery({query_name, payload: {}, meta}, function(result) {
+              wf.doQuery({query_name, payload: {}, meta}, function(result) {
                 q_rez.push({name: query_name, result});
-//                q_rez.push({name: query_name, answer: "query answer"});
               });
             }
             reply.send({reply: q_rez, error: null })

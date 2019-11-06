@@ -2,8 +2,6 @@
 
 const bcrypt = require('bcrypt');
 
-//const sqlite3 = require('sqlite3').verbose();
-
 module.exports = async function (fastify, opts) {
 
 
@@ -111,7 +109,6 @@ module.exports = async function (fastify, opts) {
         //  console.log("MailError", err);
         }
 
-
         const userData = {id: user._id, fname, mname, lname};
         const token = fastify.jwt.sign({ user: userData });
         console.log(token);
@@ -120,38 +117,7 @@ module.exports = async function (fastify, opts) {
       }
     });
 
-
-/*
-    UserModel.findOne({email: email}, function(err, row) {
-        if(row) {
-          console.log("row: ", row);
-          const hash = row.encrypted_password;
-          console.log("hash: ", hash);
-
-          bcrypt.compare(request.body.password, hash, function(err, match) {
-            console.log("match: ", match);
-            if(match) {
-              const {_id, name} = row;
-              const user = {id: _id, name};
-              const token = fastify.jwt.sign({ user });
-              console.log(token);
-              reply.send({ token })
-            } else {
-              reply.send({ token: null })
-            }
-          });
-
-
-        } else {
-          reply.send({ token: null })
-        }
-      });
-*/
-
-//      reply.send({ token: null, msg: "ok" });
-
   })
-
 
   fastify.post('/auth/login', (request, reply) => {
     console.log("/auth/login");
@@ -189,7 +155,6 @@ module.exports = async function (fastify, opts) {
 
   })
 
-
   fastify.get('/auth/users', (request, reply) => {
     console.log("/auth/users");
     const UserModel = fastify.mongoose.User;
@@ -213,42 +178,6 @@ module.exports = async function (fastify, opts) {
       });
 
   })
-
-/*
-  fastify.post('/auth/login0', (request, reply) => {
-    console.log(request.body);
-
-    const db = new sqlite3.Database("/opt/common-data/gn/production.sqlite3");
-
-      db.get("SELECT * FROM users WHERE email = ?", request.body.email, function(err, row) {
-        if(row) {
-          console.log("row: ", row);
-          const hash = row.encrypted_password;
-          console.log("hash: ", hash);
-
-          bcrypt.compare(request.body.password, hash, function(err, match) {
-            console.log("match: ", match);
-            if(match) {
-              const {id, fname, mname, lname} = row;
-              const user = {id, name: {fname, mname, lname}};
-              const token = fastify.jwt.sign({ user });
-              console.log(token);
-              reply.send({ token })
-            } else {
-              reply.send({ token: null })
-            }
-          });
-
-
-        } else {
-          reply.send({ token: null })
-        }
-      });
-    
-    db.close();
-
-  })
-*/
 
   fastify.post('/auth/logout', function (request, reply) {
     reply.send({
