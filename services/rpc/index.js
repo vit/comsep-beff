@@ -24,8 +24,8 @@ module.exports = async function (fastify, opts) {
       (typeof models[model].rpc[proc] == 'function')
     ) {
 //      models[model].rpc.call(models[model], {proc, args, cb: function(answer) {
-      models[model].rpc[proc].call(models[model], {ct, args, cb: function(answer) {
-        reply.send({answer: answer, request: request.body, error: null })
+      models[model].rpc[proc].call(models[model], {ct, args, cb: function(answer, error) {
+        reply.send({answer: answer, request: request.body, error })
       }})
     } else {
       reply.send({answer: null, error: "rpc model not found" })
