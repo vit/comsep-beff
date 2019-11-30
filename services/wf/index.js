@@ -66,6 +66,9 @@ module.exports = async function (fastify, opts) {
     if(meta.wf_id && meta.user_role) {
       WorkflowModel.findById(meta.wf_id,
         function (err, wf) {
+
+          console.log("/wf/query()/wf", wf);
+
           if(err) {
             reply.send({reply: null, error: `error '${err}'` })
             return;
