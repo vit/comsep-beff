@@ -37,6 +37,19 @@ module.exports = async function (fastify, opts) {
     }
   })
 
+  function doQueriesList(args, cb) {
+    const {wf, ctx, meta, query, acc} = args;
+    const query_name = query.shift();
+    if(query_name) {
+      wf.doQuery({ctx, query_name, payload: {}, meta}, function(result, error) {
+        acc.push({name: query_name, result, error});
+        doQueriesList(args, cb);
+      });
+    } else {
+      cb(acc);
+    }
+  }
+
   fastify.post('/wf/query', {
     preValidation: [fastify.authenticate]
   }, function (request, reply) {
@@ -48,6 +61,8 @@ module.exports = async function (fastify, opts) {
 
     meta.user = request.user;
 
+    const ctx = {models: this.mongoose};
+
     if(meta.wf_id && meta.user_role) {
       WorkflowModel.findById(meta.wf_id,
         function (err, wf) {
@@ -56,15 +71,22 @@ module.exports = async function (fastify, opts) {
             return;
           }
           if(wf) {
+            doQueriesList({wf, ctx, meta, query: [...query], acc: []}, (acc, error) => {
+              reply.send({reply: acc, error: null })
+            })
+
+/*
             const q_rez = [];
             for(let i=0; i<query.length; i++) {
               const query_name = query[i];
               //meta.query_name = query_name;
-              wf.doQuery({query_name, payload: {}, meta}, function(result) {
+              wf.doQuery({ctx, query_name, payload: {}, meta}, function(result) {
                 q_rez.push({name: query_name, result});
               });
             }
             reply.send({reply: q_rez, error: null })
+*/
+
           }
         }
       )
