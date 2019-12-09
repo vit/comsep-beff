@@ -39,8 +39,8 @@ module.exports = async function (fastify, opts) {
     reply.send({ ok: true });
   })
 
-  fastify.get('/auth/reset_users', (request, reply) => {
-    console.log("/auth/reset_users");
+  fastify.get('/auth/reset_all', (request, reply) => {
+    console.log("/auth/reset_all");
 
     const importer = require('../../lib/import');
     importer.reload_all(fastify);
