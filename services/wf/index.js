@@ -148,7 +148,7 @@ module.exports = async function (fastify, opts) {
 //*/
   })
 
-
+/*
   fastify.post('/wf/getDoc', function (request, reply) {
 
     const DocModel = this.mongoose.Doc;
@@ -180,6 +180,8 @@ module.exports = async function (fastify, opts) {
       }
     );
 
+//    console.log("/wf/saveDoc is outdated");
+//    reply.send({reply: [], error: "/wf/saveDoc is outdated" })
   });
   fastify.post('/wf/listDocs', function (request, reply) {
 
@@ -196,8 +198,10 @@ module.exports = async function (fastify, opts) {
       }
     );
 
+//    console.log("/wf/listDocs is outdated");
+//    reply.send({reply: [], error: "/wf/listDocs is outdated" })
   });
-
+*/
 
 
   fastify.post('/wf/getList', function (request, reply) {
