@@ -1,12 +1,10 @@
 'use strict'
 
 module.exports = async function (fastify, opts) {
-//module.exports = function (fastify, opts) {
 
   fastify.post('/rpc', {
     preValidation: [fastify.authenticate]
   }, function (request, reply) {
-//  }, function (request, reply) {
     const models = this.mongoose;
     const {user, body} = request;
     const user_id = user && user.user ? user.user.id : null;
@@ -15,9 +13,6 @@ module.exports = async function (fastify, opts) {
       const ctx = {models, user: user_rec};
       const {model, proc, args} = request.body;
   
-//      console.log("/rpc/user_id:", user_id);
-//      console.log("/rpc/user_rec:", user_rec);
-
       try {
         if(
           model &&

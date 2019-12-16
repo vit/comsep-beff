@@ -2,87 +2,6 @@
 
 module.exports = async function (fastify, opts) {
 
-
-  fastify.post('/wf/send', function (request, reply) {
-
-//    const TestModel = this.mongoose.Test;
-    const WorkflowModel = this.mongoose.Workflow;
-    const {id, role, name, payload} = request.body;
-
-    if(id) {
-      WorkflowModel.findById(id,
-        function (err, rez) {
-          if(err) {
-            reply.send({reply: null, error: `error '${err}'` })
-            return;
-          }
-          if(!rez) {
-            createStandardRecord(WorkflowModel, id, function(rez) {
-              if(!rez) {
-                reply.send({reply: null, error: `object with id '${id}' not found` })
-              } else {
-                reply.send({reply: rez, error: null })
-              }
-            });
-          } else {
-            rez.sendEvent(role, name, payload, function() {
-              reply.send({reply: rez, error: null })
-            });
-          }
-        }
-      )
-    } else {
-//      reply.send({reply: null, error: `object with id ${id} not found` })
-      reply.send({reply: null, error: "object id is not set" })
-    }
-  })
-
-/*
-  function doQueriesList(args, cb) {
-    const {wf, ctx, meta, query, acc} = args;
-    const query_name = query.shift();
-    if(query_name) {
-      wf.doQuery({ctx, query_name, payload: {}, meta}, function(result, error) {
-        acc.push({name: query_name, result, error});
-        doQueriesList(args, cb);
-      });
-    } else {
-      cb(acc);
-    }
-  }
-
-  fastify.post('/wf/query', {
-    preValidation: [fastify.authenticate]
-  }, function (request, reply) {
-    const WorkflowModel = this.mongoose.Workflow;
-    const ctx = {models: this.mongoose};
-
-    let {meta, event, query} = request.body;
-    meta = meta || {};
-    event = event || {};
-    query = query || [];
-    meta.user = request.user;
-
-    if(meta.wf_id && meta.user_role) {
-      WorkflowModel.findById(meta.wf_id,
-        function (err, wf) {
-          if(err) {
-            reply.send({reply: null, error: `error '${err}'` })
-            return;
-          }
-          if(wf) {
-            doQueriesList({wf, ctx, meta, query: [...query], acc: []}, (acc, error) => {
-              reply.send({reply: acc, error: null })
-            })
-          }
-        }
-      )
-    } else {
-      reply.send({reply: null, error: "wf_id is not set" })
-    }
-  })
-*/
-
   fastify.post('/wf/getSchema', function (request, reply) {
 
     const WorkflowModel = this.mongoose.Workflow;
@@ -94,24 +13,16 @@ module.exports = async function (fastify, opts) {
           if(err) {
             reply.send({reply: null, error: `error '${err}'` })
             return;
-          }
-          if(!rez) {
-            createStandardRecord(WorkflowModel, id, function(rez) {
-              if(!rez) {
-                reply.send({reply: null, error: `object with id '${id}' not found` })
-              } else {
-                reply.send({reply: rez, error: null })
-              }
-            });
-          } else {
+          } else if(rez) {
             rez.getSchema(function(schema) {
               reply.send({reply: schema, error: null })
             });
+          } else {
+            reply.send({reply: null, error: `object with id '${id}' not found` })
           }
         }
       )
     } else {
-//      reply.send({reply: null, error: `object with id ${id} not found` })
       reply.send({reply: null, error: "object id is not set" })
     }
   })
@@ -148,78 +59,6 @@ module.exports = async function (fastify, opts) {
 //*/
   })
 
-/*
-  fastify.post('/wf/getDoc', function (request, reply) {
-
-    const DocModel = this.mongoose.Doc;
-    const {docMeta} = request.body;
-
-    DocModel.getDoc({docMeta},
-      function (err, rez) {
-        if(err) {
-          reply.send({reply: null, error: `error '${err}'` })
-        } else {
-          reply.send({reply: rez, error: null })
-        }
-      }
-    );
-
-  });
-  fastify.post('/wf/saveDoc', function (request, reply) {
-
-    const DocModel = this.mongoose.Doc;
-    const {docMeta, formData} = request.body;
-
-    DocModel.saveDoc({docMeta, formData},
-      function (err, rez) {
-        if(err) {
-          reply.send({reply: null, error: `error '${err}'` })
-        } else {
-          reply.send({reply: rez, error: null })
-        }
-      }
-    );
-
-//    console.log("/wf/saveDoc is outdated");
-//    reply.send({reply: [], error: "/wf/saveDoc is outdated" })
-  });
-  fastify.post('/wf/listDocs', function (request, reply) {
-
-    const DocModel = this.mongoose.Doc;
-    const {docMeta} = request.body;
-
-    DocModel.listDocs({docMeta},
-      function (err, rez) {
-        if(err) {
-          reply.send({reply: null, error: `error '${err}'` })
-        } else {
-          reply.send({reply: rez, error: null })
-        }
-      }
-    );
-
-//    console.log("/wf/listDocs is outdated");
-//    reply.send({reply: [], error: "/wf/listDocs is outdated" })
-  });
-*/
-
-
-  fastify.post('/wf/getList', function (request, reply) {
-
-    const WorkflowModel = this.mongoose.Workflow;
-//    const {id, event, payload} = request.body;
-
-    WorkflowModel.find({},
-      function (err, rez) {
-        if(err) {
-          reply.send({reply: null, error: `error '${err}'` })
-        } else {
-          reply.send({reply: rez, error: null })
-        }
-      }
-    );
-
-  });
 
 //  fastify.post('/wf/getLibItem', function (request, reply) {
   fastify.get('/wf/getLibItem', function (request, reply) {
@@ -278,26 +117,4 @@ module.exports = async function (fastify, opts) {
   });
 
 }
-
-function createStandardRecord(model, id, cb) {
-  console.log("createStandardRecord:", id);
-  if("__ROOT__"==id) {
-    const data = {
-      _id: id,
-      state: "initial",
-      app: "__ROOT__",
-      cnt: 0,
-      title: "Root Workflow"
-    };
-    model.create(data, function (err, rez) {
-      if (err)
-        cb(null);
-      else
-        cb(rez);
-    });
-  } else {
-    cb(null);
-  }
-}
-
 
