@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 
 module.exports = async function (fastify, opts) {
 
-
+/*
   fastify.get('/auth/test_email', async (request, reply) => {
     const sgMail = fastify.sendgrid.sgMail;
       const msg = {
@@ -21,12 +21,9 @@ module.exports = async function (fastify, opts) {
       catch(err) {
         console.log("MailError", err);
       }
-
-
     reply.send({ ok: true });
   })
-
-
+*/
 
   fastify.get('/auth/drop_users', (request, reply) => {
     console.log("/auth/drop_users");
@@ -48,8 +45,6 @@ module.exports = async function (fastify, opts) {
     reply.send({ ok: true });
 
   })
-
-
 
   fastify.post('/auth/register', (request, reply) => {
     console.log("/auth/register");
@@ -165,8 +160,6 @@ module.exports = async function (fastify, opts) {
           reply.send({
             err: false,
             users: users.map(function(u) {
-//              const {_id, gn_pin, name} = u;
-//              return {_id, gn_pin, name};
               const {_id, gn_pin} = u;
               return {_id, gn_pin, fullName: u.fullName()};
             })
